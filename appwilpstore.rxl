@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WiKOStoreConfig version="1.0">
+    <StoreInfo>
+        <Name>WiKO Store</Name>
+        <PackageName>lurk.wiko.store.vivo</PackageName>
+        <Version>1.0.0</Version>
+    </StoreInfo>
+
+    <GithubRepo>
+        <Owner>lurk</Owner>
+        <Repo>wiko-store</Repo>
+        <Branch>main</Branch>
+        <BaseUrl>https://raw.githubusercontent.com/lurk/wiko-store/main/</BaseUrl>
+    </GithubRepo>
+
+    <Apps>
+        <App id="com.example.app1">
+            <Name>示例应用</Name>
+            <PackageName>com.example.app1</PackageName>
+            <Version>1.0.0</Version>
+            <VersionCode>1</VersionCode>
+            <Category>tools</Category>
+            <Developer>开发者</Developer>
+            <Description>这是一个示例应用的描述。</Description>
+            <Size>15728640</Size>
+            <Rating>4.5</Rating>
+            <DownloadCount>10000</DownloadCount>
+            <MinSDK>21</MinSDK>
+            <IconUrl>https://raw.githubusercontent.com/lurk/wiko-store/main/icons/app1.png</IconUrl>
+            <DownloadUrl>https://example.com/app1.apk</DownloadUrl>
+            <MD5>abc123</MD5>
+            <Screenshots>
+                <Screenshot>https://raw.githubusercontent.com/lurk/wiko-store/main/screenshots/app1_1.png</Screenshot>
+                <Screenshot>https://raw.githubusercontent.com/lurk/wiko-store/main/screenshots/app1_2.png</Screenshot>
+            </Screenshots>
+        </App>
+    </Apps>
+
+    <Categories>
+        <Category id="tools" name="工具" icon=""/>
+        <Category id="games" name="游戏" icon=""/>
+        <Category id="social" name="社交" icon=""/>
+        <Category id="entertainment" name="娱乐" icon=""/>
+        <Category id="system" name="系统" icon=""/>
+    </Categories>
+
+    <Settings>
+        <CacheExpireTime>3600</CacheExpireTime>
+        <MaxConcurrentDownloads>3</MaxConcurrentDownloads>
+    </Settings>
+</WiKOStoreConfig>
