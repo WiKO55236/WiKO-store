@@ -7,31 +7,31 @@
     </StoreInfo>
 
     <GithubRepo>
-        <Owner>lurk</Owner>
-        <Repo>wiko-store</Repo>
+        <Owner>WiKO55236</Owner>
+        <Repo>WiKO-store</Repo>
         <Branch>main</Branch>
-        <BaseUrl>https://raw.githubusercontent.com/lurk/wiko-store/main/</BaseUrl>
+        <BaseUrl>https://raw.githubusercontent.com/WiKO55236/WiKO-store/main/</BaseUrl>
     </GithubRepo>
 
     <Apps>
         <App id="com.example.app1">
-            <Name>示例应用</Name>
+            <Name>mt管理器</Name>
             <PackageName>com.example.app1</PackageName>
             <Version>1.0.0</Version>
             <VersionCode>1</VersionCode>
             <Category>tools</Category>
-            <Developer>开发者</Developer>
-            <Description>这是一个示例应用的描述。</Description>
+            <Developer>开发者mt</Developer>
+            <Description>这是一个非常好用的管理器。</Description>
             <Size>15728640</Size>
             <Rating>4.5</Rating>
             <DownloadCount>10000</DownloadCount>
             <MinSDK>21</MinSDK>
-            <IconUrl>https://raw.githubusercontent.com/lurk/wiko-store/main/icons/app1.png</IconUrl>
-            <DownloadUrl>https://example.com/app1.apk</DownloadUrl>
+            <IconUrl>https://raw.githubusercontent.com/WiKO55236/WiKO-store/main/icons/app1.png</IconUrl>
+            <DownloadUrl>https://file.market.xiaomi.com/download/AppStore/0cdf2c41726af47118298b5eda2d1c1bbfabac44a/MT2.26.4.apk</DownloadUrl>
             <MD5>abc123</MD5>
             <Screenshots>
-                <Screenshot>https://raw.githubusercontent.com/lurk/wiko-store/main/screenshots/app1_1.png</Screenshot>
-                <Screenshot>https://raw.githubusercontent.com/lurk/wiko-store/main/screenshots/app1_2.png</Screenshot>
+                <Screenshot>https://raw.githubusercontent.com/WiKO55236/WiKO-store/main/screenshots/app1_1.png</Screenshot>
+                <Screenshot>https://raw.githubusercontent.com/WiKO55236/WiKO-store/main/screenshots/app1_2.png</Screenshot>
             </Screenshots>
         </App>
     </Apps>
