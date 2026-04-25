@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WiKO Store</title>
+    <style>
+        :root {
+            --bg:#F8F9FC;--card:#FFFFFF;--text:#1A1A2E;--text-secondary:#6B7280;
+            --divider:#F0F0F5;--radius:24px;--radius-sm:14px;
+            --shadow-sm:0 1px 3px rgba(0,0,0,0.04);--shadow:0 4px 20px rgba(0,0,0,0.06);
+            --shadow-lg:0 12px 40px rgba(0,0,0,0.1);--transition:0.3s cubic-bezier(0.4,0,0.2,1);
+            --container-max: 480px;
+            --primary:#415FFF;--primary-light:#EDEFFF;--accent:#FF6B35;--gradient:linear-gradient(135deg,#415FFF,#6C63FF);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'SF Pro Display',-apple-system,'PingFang SC',sans-serif;
+            background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;
+            -webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;
+            transition:background var(--transition),color var(--transition);
+            display:flex;justify-content:center;
+        }
+        body.dark{--bg:#0A0A0F;--card:#1A1A2E;--text:#F0F0F5;--text-secondary:#9CA3AF;--divider:#2A2A3E;--shadow-sm:0 1px 3px rgba(0,0,0,0.2);--shadow:0 4px 20px rgba(0,0,0,0.3);--shadow-lg:0 12px 40px rgba(0,0,0,0.5);}
+        .app-container{width:100%;max-width:var(--container-max);min-height:100vh;position:relative;background:var(--bg);transition:background var(--transition);}
+        body.dark .app-container{background:var(--bg);}
+        @media(min-width:600px){.app-container{border-left:1px solid var(--divider);border-right:1px solid var(--divider);}.app-grid{grid-template-columns:repeat(3,1fr)!important;}}
+        @media(min-width:900px){.app-grid{grid-template-columns:repeat(4,1fr)!important;}}
+
+        .splash-screen{position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);transition:opacity 0.5s,visibility 0.5s;}
+        .splash-screen.hide{opacity:0;visibility:hidden;pointer-events:none;}
+        .splash-logo{font-size:clamp(40px,8vw,56px);font-weight:900;letter-spacing:-2px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:splashBounce 0.8s cubic-bezier(0.175,0.885,0.32,1.275);}
+        @keyframes splashBounce{0%{transform:scale(0.3);opacity:0;}50%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
+        .splash-orbit{width:80px;height:80px;position:relative;margin-top:24px;}
+        .splash-orbit .particle{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--primary);animation:orbit 2s linear infinite;}
+        .splash-orbit .particle:nth-child(1){animation-delay:0s;background:var(--primary);}
+        .splash-orbit .particle:nth-child(2){animation-delay:-0.4s;background:var(--accent);}
+        .splash-orbit .particle:nth-child(3){animation-delay:-0.8s;background:#34C759;}
+        .splash-orbit .particle:nth-child(4){animation-delay:-1.2s;background:#FF9500;}
+        .splash-orbit .particle:nth-child(5){animation-delay:-1.6s;background:#AF52DE;}
+        @keyframes orbit{0%{transform:rotate(0deg) translateX(32px) rotate(0deg);}100%{transform:rotate(360deg) translateX(32px) rotate(-360deg);}}
+        .splash-text{margin-top:28px;font-size:14px;color:var(--text-secondary);font-weight:500;letter-spacing:1px;animation:pulse 1.5s ease-in-out infinite;}
+        @keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
+
+        .header{position:sticky;top:0;z-index:100;background:var(--card);backdrop-filter:blur(30px);padding:clamp(6px,2vw,8px) clamp(12px,4vw,20px);display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-sm);transition:all var(--transition);}
+        .header-avatar{width:clamp(34px,8vw,40px);height:clamp(34px,8vw,40px);border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:clamp(14px,3vw,16px);box-shadow:0 4px 12px rgba(0,0,0,0.15);flex-shrink:0;}
+        .header-title{font-size:clamp(16px,4vw,18px);font-weight:700;letter-spacing:-0.5px;}
+        .header-actions{display:flex;gap:clamp(4px,1vw,6px);}
+        .header-btn{width:clamp(34px,8vw,38px);height:clamp(34px,8vw,38px);border-radius:50%;border:none;background:var(--bg);color:var(--text);font-size:clamp(14px,3vw,16px);cursor:pointer;transition:all var(--transition);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .header-btn:active{transform:scale(0.9);background:var(--primary-light);}
+
+        .search-section{padding:clamp(8px,2vw,12px) clamp(12px,4vw,20px);}
+        .search-box{display:flex;align-items:center;gap:clamp(6px,1vw,10px);background:var(--card);border-radius:30px;padding:clamp(4px,1vw,6px) clamp(4px,1vw,6px) clamp(4px,1vw,6px) clamp(14px,4vw,20px);box-shadow:var(--shadow);border:2px solid transparent;transition:all var(--transition);}
+        .search-box:focus-within{border-color:var(--primary);box-shadow:var(--shadow-lg);transform:translateY(-2px);}
+        .search-box input{flex:1;border:none;outline:none;font-size:clamp(14px,3vw,15px);background:transparent;color:var(--text);padding:clamp(8px,2vw,10px) 0;}
+        .search-box input::placeholder{color:var(--text-secondary);}
+        .search-action{width:clamp(38px,8vw,42px);height:clamp(38px,8vw,42px);border-radius:50%;border:none;background:var(--gradient);color:#fff;font-size:clamp(16px,3vw,18px);cursor:pointer;transition:all var(--transition);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+
+        .featured-section{padding:0 clamp(12px,4vw,20px) clamp(10px,2vw,16px);}
+        .featured-card{border-radius:var(--radius);padding:clamp(16px,4vw,24px);color:#fff;background:var(--gradient);position:relative;overflow:hidden;min-height:clamp(100px,20vw,140px);cursor:pointer;transition:all var(--transition);box-shadow:var(--shadow-lg);}
+        .featured-card:active{transform:scale(0.98);}
+        .featured-card .glow{position:absolute;top:-50%;right:-20%;width:clamp(120px,30vw,200px);height:clamp(120px,30vw,200px);background:rgba(255,255,255,0.1);border-radius:50%;filter:blur(40px);}
+        .featured-card .tag{display:inline-block;padding:clamp(3px,1vw,4px) clamp(8px,2vw,12px);border-radius:12px;background:rgba(255,255,255,0.2);font-size:clamp(10px,2vw,11px);font-weight:600;backdrop-filter:blur(10px);margin-bottom:clamp(6px,2vw,10px);}
+        .featured-card h2{font-size:clamp(18px,4vw,22px);font-weight:800;margin-bottom:4px;}
+        .featured-card p{font-size:clamp(11px,2vw,13px);opacity:0.85;}
+        .featured-dots{display:flex;gap:clamp(6px,1vw,8px);margin-top:clamp(10px,2vw,14px);}
+        .featured-dots span{width:clamp(6px,1vw,8px);height:clamp(6px,1vw,8px);border-radius:50%;background:rgba(255,255,255,0.4);}
+        .featured-dots span.active{background:#fff;width:clamp(22px,5vw,28px);border-radius:4px;}
+
+        .categories-section{padding:0 clamp(12px,4vw,20px) clamp(10px,2vw,14px);}
+        .categories-scroll{display:flex;gap:clamp(8px,2vw,10px);overflow-x:auto;scrollbar-width:none;padding:4px 0;align-items:center;}
+        .categories-scroll::-webkit-scrollbar{display:none;}
+        .cat-chip{padding:clamp(8px,2vw,10px) clamp(14px,3vw,20px);border-radius:clamp(22px,5vw,26px);border:none;background:var(--card);color:var(--text);font-size:clamp(12px,2.5vw,13px);font-weight:600;white-space:nowrap;cursor:pointer;box-shadow:var(--shadow-sm);transition:all var(--transition);position:relative;overflow:hidden;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;line-height:1.2;text-align:center;vertical-align:middle;height:clamp(34px,8vw,40px);min-width:clamp(38px,8vw,44px);}
+        .cat-chip::after{content:'';position:absolute;inset:0;border-radius:inherit;background:var(--gradient);opacity:0;transition:opacity var(--transition);z-index:0;}
+        .cat-chip.active::after{opacity:1;}
+        .cat-chip span{position:relative;z-index:1;display:block;line-height:1.2;}
+        .cat-chip.active span{color:#fff;}
+
+        .apps-section{padding:0 clamp(12px,4vw,20px);}
+        .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:clamp(10px,2vw,14px);}
+        .section-header h3{font-size:clamp(15px,3vw,17px);font-weight:700;}
+        .section-header button{background:none;border:none;color:var(--primary);font-size:clamp(12px,2vw,13px);font-weight:600;cursor:pointer;}
+        .app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(140px,40vw,170px),1fr));gap:clamp(10px,3vw,14px);padding-bottom:20px;}
+        @media(min-width:600px){.app-grid{grid-template-columns:repeat(3,1fr);}}
+        @media(min-width:900px){.app-grid{grid-template-columns:repeat(4,1fr);}}
+        .app-card{background:var(--card);border-radius:var(--radius-sm);padding:clamp(12px,3vw,16px);cursor:pointer;box-shadow:var(--shadow);transition:all var(--transition);position:relative;overflow:hidden;animation:cardEnter 0.5s ease forwards;opacity:0;}
+        @keyframes cardEnter{from{opacity:0;transform:translateY(30px) scale(0.94);}to{opacity:1;transform:translateY(0) scale(1);}}
+        .app-card:active{transform:scale(0.95);}
+        .app-card .rank-badge{position:absolute;top:clamp(8px,2vw,12px);left:clamp(8px,2vw,12px);width:clamp(20px,5vw,24px);height:clamp(20px,5vw,24px);border-radius:8px;background:var(--gradient);color:#fff;font-size:clamp(10px,2vw,11px);font-weight:700;display:flex;align-items:center;justify-content:center;}
+        .app-card .like-btn{position:absolute;top:clamp(8px,2vw,12px);right:clamp(8px,2vw,12px);width:clamp(26px,6vw,30px);height:clamp(26px,6vw,30px);border-radius:50%;border:none;background:var(--bg);cursor:pointer;font-size:clamp(12px,2vw,14px);display:flex;align-items:center;justify-content:center;line-height:1;}
+        .app-card .like-btn.liked{background:#FFE0E0;color:#FF3B30;}
+        .app-card .app-icon-wrap{width:clamp(48px,12vw,56px);height:clamp(48px,12vw,56px);border-radius:16px;margin:clamp(16px,4vw,20px) auto clamp(8px,2vw,12px);display:flex;align-items:center;justify-content:center;font-size:clamp(22px,5vw,28px);font-weight:800;color:var(--primary);background:var(--primary-light);box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+        .app-card:hover .app-icon-wrap{transform:scale(1.08) rotate(-5deg);}
+        .app-card img{width:clamp(48px,12vw,56px);height:clamp(48px,12vw,56px);border-radius:16px;object-fit:cover;margin:clamp(16px,4vw,20px) auto clamp(8px,2vw,12px);display:block;box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+        .app-card .app-name{font-size:clamp(13px,2.5vw,14px);font-weight:700;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .app-card .app-dev{font-size:clamp(10px,2vw,11px);color:var(--text-secondary);text-align:center;margin:clamp(2px,0.5vw,3px) 0 clamp(6px,1vw,8px);}
+        .app-card .app-footer{display:flex;justify-content:space-between;align-items:center;font-size:clamp(10px,2vw,11px);color:var(--text-secondary);gap:4px;}
+        .app-card .star-rating{color:#FF9500;font-weight:700;font-size:clamp(11px,2vw,12px);}
+        .app-card .get-btn{padding:clamp(5px,1vw,6px) clamp(10px,2vw,14px);border-radius:14px;border:none;background:var(--gradient);color:#fff;font-size:clamp(10px,2vw,11px);font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15);line-height:1.2;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;}
+
+        .bottom-nav{position:fixed;bottom:clamp(8px,2vw,16px);left:clamp(8px,2vw,16px);right:clamp(8px,2vw,16px);background:var(--card);border-radius:28px;display:flex;justify-content:space-around;padding:clamp(8px,2vw,10px) clamp(2px,1vw,4px) clamp(10px,2vw,14px);box-shadow:var(--shadow-lg);z-index:100;backdrop-filter:blur(30px);max-width:calc(var(--container-max) - 32px);margin:0 auto;}
+        .bottom-nav .nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(2px,0.5vw,4px);cursor:pointer;padding:clamp(4px,1vw,6px) 0;border:none;background:none;color:var(--text-secondary);font-size:clamp(9px,1.8vw,10px);font-weight:600;border-radius:20px;position:relative;min-width:clamp(44px,10vw,56px);flex-shrink:0;line-height:1;text-align:center;}
+        .bottom-nav .nav-item.active{color:var(--primary);}
+        .bottom-nav .nav-item.active::before{content:'';position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:20px;height:3px;background:var(--primary);border-radius:0 0 4px 4px;}
+        .bottom-nav .nav-icon{font-size:clamp(18px,4vw,22px);line-height:1;display:block;margin-bottom:clamp(1px,0.3vw,2px);}
+
+        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);z-index:200;align-items:flex-end;justify-content:center;}
+        .modal-overlay.show{display:flex;}
+        .modal-sheet{background:var(--card);border-radius:32px 32px 0 0;width:100%;max-width:var(--container-max);max-height:88vh;overflow-y:auto;animation:sheetUp 0.45s cubic-bezier(0.16,1,0.3,1);}
+        @keyframes sheetUp{from{transform:translateY(100%);}}
+
+        .toast{position:fixed;bottom:clamp(100px,20vw,120px);left:50%;transform:translateX(-50%);padding:10px 24px;border-radius:24px;background:rgba(0,0,0,0.85);color:#fff;font-size:clamp(12px,2vw,13px);font-weight:500;z-index:300;opacity:0;transition:all var(--transition);white-space:nowrap;backdrop-filter:blur(10px);}
+        .toast.show{opacity:1;}
+
+        .settings-panel{display:none;padding:clamp(12px,3vw,20px);animation:fadeIn 0.3s ease;}
+        .settings-panel.show{display:block;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}}
+        .setting-group{margin-bottom:20px;}
+        .setting-group h4{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--text-secondary);margin-bottom:10px;}
+        .setting-card{background:var(--card);border-radius:var(--radius-sm);padding:4px 16px;box-shadow:var(--shadow-sm);}
+        .setting-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;}
+        .setting-row+.setting-row{border-top:1px solid var(--divider);}
+        .theme-circles{display:flex;gap:12px;flex-wrap:wrap;padding:12px 0;}
+        .theme-circle{width:44px;height:44px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all var(--transition);}
+        .theme-circle.active{border-color:var(--primary);transform:scale(1.1);box-shadow:0 0 0 6px var(--primary-light);}
+    </style>
+</head>
+<body data-theme="vivo">
+<div class="app-container">
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-logo">WiKO</div>
+        <div class="splash-orbit"><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div></div>
+        <div class="splash-text" id="splashText">准备中...</div>
+    </div>
+
+    <div id="mainPage">
+        <div class="header">
+            <div class="header-avatar">W</div>
+            <div class="header-title">WiKO Store</div>
+            <div class="header-actions">
+                <button class="header-btn" onclick="refreshData()">⟳</button>
+                <button class="header-btn" onclick="toggleDark()" id="darkBtn">🌓</button>
+            </div>
+        </div>
+        <div class="search-section">
+            <div class="search-box">
+                <span style="opacity:0.4">🔍</span>
+                <input type="text" id="searchInput" placeholder="搜索应用、游戏..." oninput="handleSearch()">
+                <button class="search-action" onclick="handleSearch()">→</button>
+            </div>
+        </div>
+        <div class="featured-section">
+            <div class="featured-card"><div class="glow"></div><div class="tag">热门推荐</div><h2>发现精彩应用</h2><p>探索最受欢迎的应用和游戏</p><div class="featured-dots"><span class="active"></span><span></span><span></span></div></div>
+        </div>
+        <div class="categories-section"><div class="categories-scroll" id="catContainer"></div></div>
+        <div class="apps-section">
+            <div class="section-header"><h3>热门应用</h3><button onclick="showSortMenu()">排序 ⇅</button></div>
+            <div class="app-grid" id="appGrid"></div>
+        </div>
+    </div>
+
+    <!-- 设置面板 -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="setting-group"><h4>主题</h4>
+            <div class="setting-card"><div class="theme-circles">
+                <div class="theme-circle active" style="background:linear-gradient(135deg,#415FFF,#9B59B6)" onclick="setTheme('vivo')"></div>
+                <div class="theme-circle" style="background:linear-gradient(135deg,#00B4D8,#F72585)" onclick="setTheme('aurora')"></div>
+                <div class="theme-circle" style="background:linear-gradient(135deg,#FF6B6B,#FFD93D)" onclick="setTheme('sunset')"></div>
+                <div class="theme-circle" style="background:linear-gradient(135deg,#2D6A4F,#52B788)" onclick="setTheme('forest')"></div>
+            </div></div>
+        </div>
+        <div class="setting-group"><h4>显示</h4>
+            <div class="setting-card">
+                <div class="setting-row"><span>夜间模式</span><span onclick="toggleDark()" id="darkToggle" style="cursor:pointer;font-size:22px;">☀️</span></div>
+                <div class="setting-row"><span>应用总数</span><span id="appCount" style="color:var(--primary);font-weight:700;">0</span></div>
+            </div>
+        </div>
+        <button style="width:100%;padding:16px;border:none;border-radius:16px;background:#FFF0F0;color:#FF3B30;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px;" onclick="clearCache()">清除缓存</button>
+        <button style="width:100%;padding:16px;border:none;border-radius:16px;background:var(--gradient);color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;" onclick="switchTab('home')">返回首页</button>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('home')"><span class="nav-icon">🏠</span>首页</button>
+        <button class="nav-item" onclick="filterByCategory('games')"><span class="nav-icon">🎮</span>游戏</button>
+        <button class="nav-item" onclick="filterByCategory('tools')"><span class="nav-icon">🔧</span>工具</button>
+        <button class="nav-item" onclick="filterByCategory('social')"><span class="nav-icon">💬</span>社交</button>
+        <button class="nav-item" onclick="switchTab('settings')"><span class="nav-icon">⚙️</span>设置</button>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div style="width:40px;height:5px;background:var(--divider);border-radius:3px;margin:14px auto"></div>
+            <div id="modalHero"></div>
+            <div id="modalStats" style="display:flex;justify-content:space-around;padding:20px"></div>
+            <div style="padding:0 20px;color:var(--text-secondary);font-size:14px;line-height:1.7" id="modalDesc"></div>
+            <div id="modalScreens" style="display:flex;gap:8px;padding:12px 20px;overflow-x:auto"></div>
+            <div style="display:flex;gap:10px;padding:0 20px 20px">
+                <button style="flex:1;padding:14px;border-radius:16px;border:none;background:var(--bg);color:var(--text);font-size:14px;font-weight:700;cursor:pointer" onclick="closeModal()">取消</button>
+                <button style="flex:1;padding:14px;border-radius:16px;border:none;background:var(--gradient);color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.2)" onclick="startDownload()">下载</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const RXL_URL='https://raw.githubusercontent.com/WiKO55236/WiKO-store/main/appwilpstore.rxl';
+let allApps=[],categories=[],currentCat='all',currentApp=null,sortBy='default',likedApps=new Set();
+const $=id=>document.getElementById(id);
+
+function init(){
+    const s=$('splashScreen'),ts=['连接中...','加载数据...','准备就绪...'];let i=0;
+    const t=setInterval(()=>{$('splashText').textContent=ts[i];i=(i+1)%ts.length},1000);
+    fetch(RXL_URL,{cache:'no-cache'}).then(r=>r.text()).then(x=>{parseRxl(x);done();}).catch(()=>{loadDemo();done();});
+    function done(){clearInterval(t);$('splashText').textContent='完成!';setTimeout(()=>s.classList.add('hide'),400);}
+}
+function parseRxl(x){const d=(new DOMParser()).parseFromString(x,'text/xml');categories=[];d.querySelectorAll('Categories>Category').forEach(c=>categories.push({id:c.getAttribute('id'),name:c.getAttribute('name')}));allApps=[];d.querySelectorAll('Apps>App').forEach(a=>{const ss=[];a.querySelectorAll('Screenshots>Screenshot').forEach(s=>ss.push(s.textContent.trim()));allApps.push({id:a.getAttribute('id'),name:gt(a,'Name'),packageName:gt(a,'PackageName'),version:gt(a,'Version'),category:gt(a,'Category'),developer:gt(a,'Developer'),description:gt(a,'Description'),size:parseInt(gt(a,'Size')||0),rating:parseFloat(gt(a,'Rating')||0),downloadCount:parseInt(gt(a,'DownloadCount')||0),iconUrl:gt(a,'IconUrl'),downloadUrl:gt(a,'DownloadUrl'),screenshots:ss});});renderAll();}
+function gt(e,t){const c=e.querySelector(t);return c?c.textContent.trim():'';}
+function loadDemo(){categories=[{id:'tools',name:'工具'},{id:'games',name:'游戏'},{id:'social',name:'社交'},{id:'entertainment',name:'娱乐'}];allApps=[{id:'1',name:'微信',developer:'腾讯',category:'social',rating:4.5,size:268435456,version:'8.0.48',downloadCount:50000000,description:'社交应用',iconUrl:'',downloadUrl:'#',packageName:'com.tencent.mm',screenshots:[]},{id:'2',name:'抖音',developer:'字节跳动',category:'entertainment',rating:4.3,size:188743680,version:'28.5.0',downloadCount:30000000,description:'短视频',iconUrl:'',downloadUrl:'#',packageName:'com.ss.android.ugc.aweme',screenshots:[]},{id:'3',name:'支付宝',developer:'蚂蚁集团',category:'tools',rating:4.6,size:230686720,version:'10.5.12',downloadCount:40000000,description:'支付平台',iconUrl:'',downloadUrl:'#',packageName:'com.eg.android.AlipayGphone',screenshots:[]},{id:'4',name:'王者荣耀',developer:'腾讯',category:'games',rating:4.7,size:3435973836,version:'9.1.1',downloadCount:80000000,description:'MOBA手游',iconUrl:'',downloadUrl:'#',packageName:'com.tencent.tmgp.sgame',screenshots:[]}];renderAll();}
+function fs(b){if(!b)return'0';if(b<1048576)return(b/1024).toFixed(0)+'KB';if(b<1073741824)return(b/1048576).toFixed(0)+'MB';return(b/1073741824).toFixed(1)+'GB';}
+function fc(n){if(!n)return'0';if(n<1000)return''+n;if(n<10000)return(n/1000).toFixed(1)+'K';if(n<1e8)return(n/10000).toFixed(0)+'万';return(n/1e8).toFixed(1)+'亿';}
+function renderAll(){$('appCount').textContent=allApps.length;$('catContainer').innerHTML='<button class="cat-chip'+(currentCat==='all'?' active':'')+'" onclick="setCat(\'all\')"><span>全部</span></button>'+categories.map(c=>'<button class="cat-chip'+(c.id===currentCat?' active':'')+'" onclick="setCat(\''+c.id+'\')"><span>'+c.name+'</span></button>').join('');applyFilters();}
+function setCat(c){currentCat=c;renderAll();$('searchInput').value='';}
+function handleSearch(){applyFilters();}
+function showSortMenu(){const o=['默认','评分','下载量','大小','名称'];const s=prompt('排序: 1.'+o.join(' 2.')+' 3.'+o[2]+' 4.'+o[3]+' 5.'+o[4],'1');if(s){const m=['default','rating','downloads','size-asc','name'];sortBy=m[parseInt(s)-1]||'default';applyFilters();}}
+function applyFilters(){let f=[...allApps];if(currentCat!=='all')f=f.filter(a=>a.category===currentCat);const q=($('searchInput').value||'').toLowerCase();if(q)f=f.filter(a=>(a.name||'').toLowerCase().includes(q)||(a.developer||'').toLowerCase().includes(q));if(sortBy==='rating')f.sort((a,b)=>b.rating-a.rating);else if(sortBy==='downloads')f.sort((a,b)=>b.downloadCount-a.downloadCount);else if(sortBy==='size-asc')f.sort((a,b)=>a.size-b.size);else if(sortBy==='name')f.sort((a,b)=>(a.name||'').localeCompare(b.name||''));renderApps(f);}
+function renderApps(a){const g=$('appGrid');if(!a.length){g.innerHTML='<div style="text-align:center;padding:60px;color:var(--text-secondary);grid-column:1/-1">无结果</div>';return;}g.innerHTML=a.map((x,i)=>`<div class="app-card" style="animation-delay:${i*0.05}s" onclick="openDetail('${x.id}')">${i<3?`<div class="rank-badge">${i+1}</div>`:''}<button class="like-btn ${likedApps.has(x.id)?'liked':''}" onclick="event.stopPropagation();toggleLike('${x.id}')">${likedApps.has(x.id)?'❤':'🤍'}</button>${x.iconUrl?`<img src="${x.iconUrl}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="app-icon-wrap" style="display:none">${x.name?.[0]||'?'}</div>`:`<div class="app-icon-wrap">${x.name?.[0]||'?'}</div>`}<div class="app-name">${x.name}</div><div class="app-dev">${x.developer}</div><div class="app-footer"><span class="star-rating">★${(x.rating||0).toFixed(1)}</span><span>${fs(x.size)}</span><span class="get-btn" onclick="event.stopPropagation();startDownloadFromCard('${x.id}')">获取</span></div></div>`).join('');}
+function toggleLike(id){likedApps.has(id)?likedApps.delete(id):likedApps.add(id);applyFilters();}
+function openDetail(id){currentApp=allApps.find(a=>a.id===id||a.packageName===id);if(!currentApp)return;$('modalHero').innerHTML=`<div style="margin:0 20px;border-radius:14px;padding:24px;background:var(--gradient);color:#fff;text-align:center"><div style="width:72px;height:72px;border-radius:20px;margin:0 auto 12px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:34px">${currentApp.name?.[0]||'?'}</div><h2>${currentApp.name}</h2><div style="opacity:0.8">${currentApp.developer}·v${currentApp.version}</div></div>`;$('modalStats').innerHTML=`<div style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--primary)">★${(currentApp.rating||0).toFixed(1)}</div><div style="font-size:11px;color:var(--text-secondary)">评分</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--primary)">${fs(currentApp.size)}</div><div style="font-size:11px;color:var(--text-secondary)">大小</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--primary)">${fc(currentApp.downloadCount)}</div><div style="font-size:11px;color:var(--text-secondary)">下载</div></div>`;$('modalScreens').innerHTML=currentApp.screenshots?.length?currentApp.screenshots.map(s=>`<img src="${s}" style="width:130px;height:220px;border-radius:14px;object-fit:cover">`).join(''):'';$('modalOverlay').classList.add('show');}
+function closeModal(){$('modalOverlay').classList.remove('show');}
+function closeModalOutside(e){if(e.target===$('modalOverlay'))closeModal();}
+function startDownloadFromCard(id){currentApp=allApps.find(a=>a.id===id||a.packageName===id);startDownload();}
+function startDownload(){if(!currentApp||!currentApp.downloadUrl||currentApp.downloadUrl==='#'){toast('无下载链接');return;}if(window.AndroidBridge){window.AndroidBridge.downloadApp(currentApp.downloadUrl,(currentApp.packageName||'app')+'.apk');toast('开始下载');return;}const a=document.createElement('a');a.href=currentApp.downloadUrl;a.download=(currentApp.packageName||'app')+'.apk';a.click();toast('下载中');}
+function switchTab(t){
+    document.querySelectorAll('.bottom-nav .nav-item').forEach(b=>b.classList.remove('active'));
+    if(t==='home'){
+        $('mainPage').style.display='block';$('settingsPanel').classList.remove('show');
+        document.querySelector('.bottom-nav .nav-item:nth-child(1)').classList.add('active');
+        currentCat='all';renderAll();
+    } else if(t==='settings'){
+        $('mainPage').style.display='none';$('settingsPanel').classList.add('show');
+        document.querySelector('.bottom-nav .nav-item:nth-child(5)').classList.add('active');
+        $('appCount').textContent=allApps.length;
+    }
+}
+function filterByCategory(c){currentCat=c;renderAll();$('mainPage').style.display='block';$('settingsPanel').classList.remove('show');}
+function refreshData(){allApps=[];currentCat='all';$('splashScreen').classList.remove('hide');$('splashText').textContent='刷新中...';fetch(RXL_URL,{cache:'no-cache'}).then(r=>r.text()).then(x=>{parseRxl(x);$('splashText').textContent='完成!';setTimeout(()=>$('splashScreen').classList.add('hide'),400);}).catch(()=>{loadDemo();$('splashText').textContent='完成!';setTimeout(()=>$('splashScreen').classList.add('hide'),400);});}
+function clearCache(){allApps=[];likedApps.clear();renderApps([]);toast('已清除');}
+function setTheme(t){
+    document.body.setAttribute('data-theme',t);
+    document.querySelectorAll('.theme-circle').forEach(c=>c.classList.remove('active'));
+    localStorage.setItem('wiko-theme',t);toast('主题已切换');
+}
+function toggleDark(){
+    const isDark=document.body.classList.toggle('dark');
+    $('darkToggle').textContent=isDark?'🌙':'☀️';
+    $('darkBtn').textContent=isDark?'☀️':'🌓';
+    localStorage.setItem('wiko-dark',isDark?'1':'0');
+}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000);}
+
+// 恢复设置
+(function(){
+    const saved=localStorage.getItem('wiko-theme');if(saved)setTheme(saved);
+    if(localStorage.getItem('wiko-dark')==='1'){document.body.classList.add('dark');$('darkToggle').textContent='🌙';$('darkBtn').textContent='☀️';}
+})();
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
